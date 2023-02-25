@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include <string.h>
+#include <stdlib.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -62,7 +63,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
-unsigned char rx_buf[100];
+unsigned char rx_buf[5];
 
 /* USER CODE END PFP */
 
@@ -70,16 +71,18 @@ unsigned char rx_buf[100];
 /* USER CODE BEGIN 0 */
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
 
-	HAL_UART_Receive_IT(&huart2,rx_buf ,6);
+	HAL_UART_Receive_IT(&huart2,rx_buf ,5);
 
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 
-	if(strcmp(rx_buf,"hello1")==0)
-	HAL_UART_Transmit_IT(&huart2, "DONE", 6);
-	else
-		HAL_UART_Transmit_IT(&huart2, "NONE", 6);
+	uint16_t number = atoi(rx_buf);
+	number+=5; //add 5 and return
+	char temp[5];
+	sprintf(temp,"%d",number);
+	HAL_UART_Transmit_IT(&huart2,temp, 5);
+
 }
 /* USER CODE END 0 */
 
@@ -121,7 +124,7 @@ int main(void)
   unsigned char message[]="hello\r\n";
   unsigned char buffer[15];
 
-  HAL_UART_Receive_IT(&huart2,rx_buf,6);
+  HAL_UART_Receive_IT(&huart2,rx_buf,5);
   while (1)
   {
     /* USER CODE END WHILE */
