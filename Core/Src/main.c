@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-//#include "stdio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -62,12 +61,22 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
+unsigned char rx_buf[100];
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
+	HAL_GPIO_TogglePin(GPIOA, 5);
+	HAL_UART_Receive_IT(&huart2,rx_buf ,5);
 
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
+	  HAL_UART_Transmit_IT(&huart2, rx_buf, 5);
+		HAL_GPIO_TogglePin(GPIOA, 5);
+}
 /* USER CODE END 0 */
 
 /**
@@ -105,16 +114,16 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  unsigned char message[]="hello";
+  unsigned char message[]="hello\r\n";
   unsigned char buffer[15];
 
+  HAL_UART_Transmit_IT(&huart2, message, sizeof(message));
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	HAL_UART_Receive(&huart2, buffer, 5,HAL_MAX_DELAY);
-	HAL_UART_Transmit(&huart2, buffer, 5, HAL_MAX_DELAY);
+
 
 
   }
