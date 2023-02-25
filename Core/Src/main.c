@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include <string.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -68,14 +69,17 @@ unsigned char rx_buf[100];
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
-	HAL_GPIO_TogglePin(GPIOA, 5);
-	HAL_UART_Receive_IT(&huart2,rx_buf ,5);
+
+	HAL_UART_Receive_IT(&huart2,rx_buf ,6);
 
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
-	  HAL_UART_Transmit_IT(&huart2, rx_buf, 5);
-		HAL_GPIO_TogglePin(GPIOA, 5);
+
+	if(strcmp(rx_buf,"hello1")==0)
+	HAL_UART_Transmit_IT(&huart2, "DONE", 6);
+	else
+		HAL_UART_Transmit_IT(&huart2, "NONE", 6);
 }
 /* USER CODE END 0 */
 
@@ -117,7 +121,7 @@ int main(void)
   unsigned char message[]="hello\r\n";
   unsigned char buffer[15];
 
-  HAL_UART_Transmit_IT(&huart2, message, sizeof(message));
+  HAL_UART_Receive_IT(&huart2,rx_buf,6);
   while (1)
   {
     /* USER CODE END WHILE */
