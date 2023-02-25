@@ -5,7 +5,7 @@ UART using stm32 HAL
 - [X] HAL UART recieve (echo back polling)
 - [X] HAL UART transmit Interrupt
   - [X] HAL UART recieve and the compare the string to send "DONE" back
-  - [ ] HAL UART string to number and use it to perform calculation and reurn result
+  - [X] HAL UART string to number and use it to perform calculation and reurn result
 
 - [X] HAL UART recieve interrupt
 - [ ] HAL UART transmit DMA
