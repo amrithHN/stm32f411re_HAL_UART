@@ -18,8 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include <string.h>
-#include <stdlib.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -42,6 +40,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USER CODE BEGIN PV */
 //#ifdef __GNUC__
@@ -61,6 +60,7 @@ UART_HandleTypeDef huart2;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 unsigned char rx_buf[5];
@@ -69,21 +69,7 @@ unsigned char rx_buf[5];
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
 
-	HAL_UART_Receive_IT(&huart2,rx_buf ,5);
-
-}
-
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
-
-	uint16_t number = atoi(rx_buf);
-	number+=5; //add 5 and return
-	char temp[5];
-	sprintf(temp,"%d",number);
-	HAL_UART_Transmit_IT(&huart2,temp, 5);
-
-}
 /* USER CODE END 0 */
 
 /**
@@ -114,6 +100,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
@@ -121,10 +108,10 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  unsigned char message[]="hello\r\n";
+  unsigned char message[]="helloAmrith\r\n";
   unsigned char buffer[15];
 
-  HAL_UART_Receive_IT(&huart2,rx_buf,5);
+  HAL_UART_Transmit_DMA(&huart2, message, 15);
   while (1)
   {
     /* USER CODE END WHILE */
@@ -213,6 +200,22 @@ static void MX_USART2_UART_Init(void)
   /* USER CODE BEGIN USART2_Init 2 */
 
   /* USER CODE END USART2_Init 2 */
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Stream6_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
 
 }
 
