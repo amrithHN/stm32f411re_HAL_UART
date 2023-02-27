@@ -8,5 +8,5 @@ UART using stm32 HAL
   - [X] HAL UART string to number and use it to perform calculation and reurn result
 
 - [X] HAL UART recieve interrupt
-- [ ] HAL UART transmit DMA
-- [ ] HAL UART recieve DMA
+- [X] HAL UART transmit DMA
+- [X] HAL UART recieve DMA

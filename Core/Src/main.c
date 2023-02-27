@@ -41,6 +41,7 @@
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_usart2_tx;
+DMA_HandleTypeDef hdma_usart2_rx;
 
 /* USER CODE BEGIN PV */
 //#ifdef __GNUC__
@@ -54,6 +55,18 @@ DMA_HandleTypeDef hdma_usart2_tx;
 //  HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
 //  return ch;
 //}
+unsigned char message[25]="hello ";
+unsigned char buffer[15];
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	strcat(message,buffer);
+	HAL_UART_Transmit_DMA(&huart2, message, 25);
+}
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+	HAL_UART_Receive_DMA(&huart2, buffer, 5);
+}
+
 
 /* USER CODE END PV */
 
@@ -108,10 +121,9 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  unsigned char message[]="helloAmrith\r\n";
-  unsigned char buffer[15];
 
-  HAL_UART_Transmit_DMA(&huart2, message, 15);
+
+  HAL_UART_Receive_DMA(&huart2, buffer, 5);
   while (1)
   {
     /* USER CODE END WHILE */
@@ -213,6 +225,9 @@ static void MX_DMA_Init(void)
   __HAL_RCC_DMA1_CLK_ENABLE();
 
   /* DMA interrupt init */
+  /* DMA1_Stream5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
   /* DMA1_Stream6_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
